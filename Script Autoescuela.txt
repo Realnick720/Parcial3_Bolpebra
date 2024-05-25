@@ -1,0 +1,110 @@
+--PERSONA
+create table persona (
+	id_persona int generated always as identity,
+	nombres varchar (50),
+	apellidos varchar (50),
+	fecha_nacimiento date,
+	ci int,
+	telefono int,
+	
+	primary key (id_persona)
+);
+
+--CURSO
+create table curso(
+	id_curso int generated always as identity,
+	nombre varchar (50),
+	descripcion varchar (250),
+	costo numeric (10,2),
+	duracion_horas int,
+	
+	primary key (id_curso)
+);
+
+--TIPO VEHICULO
+create table tipo_vehiculo(
+	id_tipovehiculo int generated always as identity,
+	descripcion varchar (250),
+	capacidad_kg int,
+	
+	primary key (id_tipovehiculo)
+);
+
+--VEHICULO
+create table vehiculo(
+	id_vehiculo int generated always as identity,
+	marca varchar (50),
+	modelo varchar (50),
+	color varchar (20),
+	placa varchar (10),
+	anio int,
+	transmision int,
+	id_tipovehiculo int,
+	
+	primary key (id_vehiculo)
+);
+alter table vehiculo
+add foreign key (id_tipovehiculo) references tipo_vehiculo(id_tipovehiculo);
+
+--INSCRIPCION
+create table inscripcion(
+	id_inscripcion int generated always as identity,
+	fecha date,
+	tipo_curso int,
+	estado int,
+	id_curso int,
+	id_vehiculo int,
+	id_instructor int,
+	id_alumno int,
+	
+	primary key (id_inscripcion)
+);
+alter table inscripcion
+add foreign key (id_curso) references curso(id_curso),
+add foreign key (id_instructor)references persona (id_persona),
+add foreign key (id_alumno) references persona (id_persona)
+add foreign key (id_vehiculo) references vehiculo (id_vehiculo);
+
+--DETALLE CURSO
+create table detalle_curso(
+	id_detallecurso int generated always as identity,
+	fecha_inicio date,
+	fecha_fin date,
+	descripcion varchar (250),
+	estado int,
+	modalidad int,
+	id_inscripcion int,
+	id_detallecurso_recursivo int,
+	
+	primary key (id_detallecurso)
+);
+alter table detalle_curso
+add foreign key (id_inscripcion) references inscripcion(id_inscripcion),
+add foreign key (id_detallecurso_recursivo) references detalle_curso(id_detallecurso);
+
+--USUARIO
+create table usuario(
+	id_usuario int generated always as identity,
+	usuario varchar (50),
+	contrasena varchar (100),
+	id_persona int,
+	
+	primary key (id_usuario)
+);
+alter table usuario
+add foreign key (id_persona) references persona(id_persona);
+
+--NOTA DE VENTA
+create table nota_venta(
+	id_notaventa int generated always as identity,
+	nombre varchar (50),
+	fecha_emision date,
+	total numeric (10,2),
+	id_usuario int,
+	id_inscripcion int,
+	
+	primary key (id_notaventa)
+);
+alter table nota_venta
+add foreign key (id_usuario) references usuario(id_usuario),
+add foreign key (id_inscripcion) references inscripcion (id_inscripcion);
